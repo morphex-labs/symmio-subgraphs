@@ -10,7 +10,7 @@ import {
 	User as UserModel,
 	UserActivity,
 } from "../generated/schema"
-
+import { symmioMultiAccount as MultiAccount } from "../generated/symmioMultiAccount/symmioMultiAccount";
 import {ethereum} from "@graphprotocol/graph-ts/chain/ethereum"
 
 export function getDateFromTimeStamp(timestamp: BigInt): Date {
@@ -251,3 +251,10 @@ export function getConfiguration(event: ethereum.Event): Configuration {
 	}
 	return configuration
 }
+
+export function getOwner(account: Address): Address {
+	const multiAccount = MultiAccount.bind(Address.fromString("0x6D63921D8203044f6AbaD8F346d3AEa9A2719dDD"))
+	return multiAccount.owners(account)
+}
+
+export const ZERO_ADDRESS = Address.fromHexString("0x0000000000000000000000000000000000000000")
