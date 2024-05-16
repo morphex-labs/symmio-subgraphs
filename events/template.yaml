@@ -176,8 +176,6 @@ dataSources:
           handler: handleLiquidatePartyAOld
         - event: LiquidatePartyB(address,address,address,uint256,int256)
           handler: handleLiquidatePartyB
-        - event: LiquidatePartyB(address,address,address)
-          handler: handleLiquidatePartyBOld
         - event: LiquidatePendingPositionsPartyA(address,address)
           handler: handleLiquidatePendingPositionsPartyA
         - event: LiquidatePositionsPartyA(address,address,uint256[])

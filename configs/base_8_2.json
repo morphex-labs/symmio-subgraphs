@@ -10,17 +10,17 @@
       "symmioMultiAccountName": "multi_account_freestyle"
     }
   ],
-  "analyticsDeployUrl": "bmx/symmioanalytics_base_8_2",
-  "mainDeployUrl": "symmiograph/symmiomain_base_8_2",
-  "partiesDeployUrl": "symmiograph/symmioparties_base_8_2",
-  "eventsDeployUrl": "symmiograph/symmioevents_base_8_2",
-  "fundingrateDeployUrl": "symmiograph/symmiofundingrate_base_8_2",
-  "userProfileDeployUrl": "symmiograph/symmiouserprofile_base_8_2",
+  "analyticsDeployUrl": "bmx/symmioanalytics_base_8_2_dev",
+  "mainDeployUrl": "bmx/symmiomain_base_8_2_dev",
+  "partiesDeployUrl": "bmx/symmioparties_base_8_2_dev",
+  "eventsDeployUrl": "bmx/symmioevents_base_8_2_dev",
+  "fundingrateDeployUrl": "bmx/symmiofundingrate_base_8_2_dev",
+  "userprofileDeployUrl": "bmx/symmiouserprofile_base_8_2_dev",
 
-  "studio-analytics": "analytics_base_8_2",
-  "studio-main": "main_base_8_2",
-  "studio-parties": "parties_base_8_2",
-  "studio-events": "events_base_8_2",
-  "studio-fundingrate": "fundingrate_base_8_2",
-  "studio-userprofile": "userprofile_base_8_2"
+  "studio-analytics": "bmx_analytics_base_8_2_dev",
+  "studio-main": "bmx_main_base_8_2_dev",
+  "studio-parties": "bmx_parties_base_8_2_dev",
+  "studio-events": "bmx_events_base_8_2_dev",
+  "studio-fundingrate": "bmx_fundingrate_base_8_2_dev",
+  "studio-userprofile": "bmx_userprofile_base_8_2_dev"
 }

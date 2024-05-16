@@ -432,13 +432,16 @@ export function handleSendQuote(event: SendQuoteEvent): void {
         let Result = callResultGetQuote.value as ethereum.Tuple
         let initialNewEntity = initialHelper(Result)
         if (initialNewEntity) {
-<<<<<<< main/src/main.ts
             entity.maxFundingRate = initialNewEntity.tradingFee
             initialEntity.tradingFee = initialNewEntity.tradingFee
-=======
-            entity.maxFundingRate = initialNewEntity.maxFundingRate
-            initialEntity.maxFundingRate = initialNewEntity.maxFundingRate
->>>>>>> main/src/main.ts
+// unhandled merge conflict on main branch...
+// <<<<<<< main/src/main.ts
+//             entity.maxFundingRate = initialNewEntity.tradingFee
+//             initialEntity.tradingFee = initialNewEntity.tradingFee
+// =======
+//             entity.maxFundingRate = initialNewEntity.maxFundingRate
+//             initialEntity.maxFundingRate = initialNewEntity.maxFundingRate
+// >>>>>>> main/src/main.ts
         }
     }
 

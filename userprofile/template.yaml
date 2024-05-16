@@ -141,7 +141,7 @@ dataSources:
           handler: handleFullyLiquidatedPartyB
         - event: LiquidatePartyA(address,address)
           handler: handleLiquidatePartyA
-        - event: LiquidatePartyB(address,address,address)
+        - event: LiquidatePartyB(address,address,address,uint256,int256)
           handler: handleLiquidatePartyB
         - event: LiquidatePositionsPartyA(address,address,uint256[])
           handler: handleLiquidatePositionsPartyA
