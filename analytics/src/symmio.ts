@@ -107,17 +107,17 @@ export enum QuoteStatus {
 	EXPIRED,
 }
 
-let rolesNames = new Map<string, string>()
-rolesNames.set('0x1effbbff9c66c5e59634f24fe842750c60d18891155c32dd155fc2d661a4c86d', 'DEFAULT_ADMIN_ROLE')
-rolesNames.set('0xb048589f9ee6ae43a7d6093c04bc48fc93d622d76009b51a2c566fc7cda84ce7', 'MUON_SETTER_ROLE')
-rolesNames.set('0xddf732565ddd4d1d3a527786b8b1e425a602b603d457c0a999938869f38049b0', 'SYMBOL_MANAGER_ROLE')
-rolesNames.set('0x61c92169ef077349011ff0b1383c894d86c5f0b41d986366b58a6cf31e93beda', 'SETTER_ROLE')
-rolesNames.set('0x65d7a28e3265b37a6474929f336521b332c1681b933f6cb9f3376673440d862a', 'PAUSER_ROLE')
-rolesNames.set('0x427da25fe773164f88948d3e215c94b6554e2ed5e5f203a821c9f2f6131cf75a', 'UNPAUSER_ROLE')
-rolesNames.set('0x23288e74cb14deb13fd69e749986e8975f19aa3efb14b2fe5e9b512d772f19b3', 'PARTY_B_MANAGER_ROLE')
-rolesNames.set('0x5e17fc5225d4a099df75359ce1f405503ca79498a8dc46a7d583235a0ee45c16', 'LIQUIDATOR_ROLE')
-rolesNames.set('0x905e7c6bceabadb31a2ebbb666d0d6df4dfb3156f376c424680851d38988ea84', 'SUSPENDER_ROLE')
-rolesNames.set('0xc785f0e55c16138ca0f8448186fa6229be092a3a83db3c5d63c9286723c5a2c4', 'DISPUTE_ROLE')
+// let rolesNames = new Map<string, string>()
+// rolesNames.set('0x1effbbff9c66c5e59634f24fe842750c60d18891155c32dd155fc2d661a4c86d', 'DEFAULT_ADMIN_ROLE')
+// rolesNames.set('0xb048589f9ee6ae43a7d6093c04bc48fc93d622d76009b51a2c566fc7cda84ce7', 'MUON_SETTER_ROLE')
+// rolesNames.set('0xddf732565ddd4d1d3a527786b8b1e425a602b603d457c0a999938869f38049b0', 'SYMBOL_MANAGER_ROLE')
+// rolesNames.set('0x61c92169ef077349011ff0b1383c894d86c5f0b41d986366b58a6cf31e93beda', 'SETTER_ROLE')
+// rolesNames.set('0x65d7a28e3265b37a6474929f336521b332c1681b933f6cb9f3376673440d862a', 'PAUSER_ROLE')
+// rolesNames.set('0x427da25fe773164f88948d3e215c94b6554e2ed5e5f203a821c9f2f6131cf75a', 'UNPAUSER_ROLE')
+// rolesNames.set('0x23288e74cb14deb13fd69e749986e8975f19aa3efb14b2fe5e9b512d772f19b3', 'PARTY_B_MANAGER_ROLE')
+// rolesNames.set('0x5e17fc5225d4a099df75359ce1f405503ca79498a8dc46a7d583235a0ee45c16', 'LIQUIDATOR_ROLE')
+// rolesNames.set('0x905e7c6bceabadb31a2ebbb666d0d6df4dfb3156f376c424680851d38988ea84', 'SUSPENDER_ROLE')
+// rolesNames.set('0xc785f0e55c16138ca0f8448186fa6229be092a3a83db3c5d63c9286723c5a2c4', 'DISPUTE_ROLE')
 
 // //////////////////////////////////// CONTROL ////////////////////////////////////////
 export function handleAddSymbol(event: AddSymbol): void {
@@ -138,8 +138,11 @@ export function handleSetSymbolTradingFee(event: SetSymbolTradingFee): void {
 }
 
 export function handleRoleGranted(event: RoleGranted): void {
-	let gr = new GrantedRole(rolesNames.get(event.params.role.toHexString()) + "_" + event.params.user.toHexString())
-	gr.role = rolesNames.get(event.params.role.toHexString()) || event.params.role.toHexString()
+	// let gr = new GrantedRole(rolesNames.get(event.params.role.toHexString()) + "_" + event.params.user.toHexString())
+	// gr.role = rolesNames.get(event.params.role.toHexString()) || event.params.role.toHexString()
+
+	let gr = new GrantedRole(event.params.role.toHexString() + "_" + event.params.user.toHexString())
+	gr.role = event.params.role.toHexString() || event.params.role.toHexString()
 	gr.user = event.params.user
 	gr.grantTransaction = event.transaction.hash
 	gr.revokeTransaction = null
@@ -148,10 +151,10 @@ export function handleRoleGranted(event: RoleGranted): void {
 }
 
 export function handleRoleRevoked(event: RoleRevoked): void {
-	let gr = GrantedRole.load(rolesNames.get(event.params.role.toHexString()) + "_" + event.params.user.toHexString())
+	let gr = GrantedRole.load(event.params.role.toHexString() + "_" + event.params.user.toHexString())
 	if (gr == null) {
-		gr = new GrantedRole(rolesNames.get(event.params.role.toHexString()) + "_" + event.params.user.toHexString())
-		gr.role = rolesNames.get(event.params.role.toHexString()) || event.params.role.toHexString()
+		gr = new GrantedRole(event.params.role.toHexString() + "_" + event.params.user.toHexString())
+		gr.role = event.params.role.toHexString() || event.params.role.toHexString()
 		gr.user = event.params.user
 	}
 	gr.updateTimestamp = event.block.timestamp
@@ -227,9 +230,9 @@ export function handleDeallocatePartyA(event: DeallocatePartyA): void {
 }
 
 export function handleDeposit(event: Deposit): void {
-	if (getOwner(event.params.user) == ZERO_ADDRESS) {
-		return  // skip events not for BMX
-	}
+	// if (getOwner(event.params.user) == ZERO_ADDRESS) {
+	// 	return  // skip events not for BMX
+	// }
 	let account = AccountModel.load(event.params.user.toHexString())
 	if (account == null) {
 		let user = createNewUser(event.params.user, null, event.block, event.transaction)
@@ -262,9 +265,9 @@ export function handleDeposit(event: Deposit): void {
 }
 
 export function handleWithdraw(event: Withdraw): void {
-	if (getOwner(event.params.sender) == ZERO_ADDRESS) {
-		return  // skip events not for BMX
-	}
+	// if (getOwner(event.params.sender) == ZERO_ADDRESS) {
+	// 	return  // skip events not for BMX
+	// }
 	let account = AccountModel.load(event.params.sender.toHexString())
 	if (account == null) {
 		let user = createNewUser(event.params.sender, null, event.block, event.transaction)
@@ -298,9 +301,9 @@ export function handleWithdraw(event: Withdraw): void {
 }
 
 export function handleAllocateForPartyB(event: AllocateForPartyB): void {
-	if (getOwner(event.params.partyB) == ZERO_ADDRESS) {
-		return  // skip events not for BMX
-	}
+	// if (getOwner(event.params.partyB) == ZERO_ADDRESS) {
+	// 	return  // skip events not for BMX
+	// }
 	let account = AccountModel.load(event.params.partyB.toHexString())!
 	account.allocated = account.allocated.plus(event.params.amount)
 	account.updateTimestamp = event.block.timestamp
@@ -308,9 +311,9 @@ export function handleAllocateForPartyB(event: AllocateForPartyB): void {
 }
 
 export function handleAllocatePartyB(event: AllocatePartyB): void {
-	if (getOwner(event.params.partyB) == ZERO_ADDRESS) {
-		return  // skip events not for BMX
-	}
+	// if (getOwner(event.params.partyB) == ZERO_ADDRESS) {
+	// 	return  // skip events not for BMX
+	// }
 	let account = AccountModel.load(event.params.partyB.toHexString())!
 	account.allocated = account.allocated.plus(event.params.amount)
 	account.updateTimestamp = event.block.timestamp
@@ -318,9 +321,9 @@ export function handleAllocatePartyB(event: AllocatePartyB): void {
 }
 
 export function handleDeallocateForPartyB(event: DeallocateForPartyB): void {
-	if (getOwner(event.params.partyB) == ZERO_ADDRESS) {
-		return  // skip events not for BMX
-	}
+	// if (getOwner(event.params.partyB) == ZERO_ADDRESS) {
+	// 	return  // skip events not for BMX
+	// }
 	let account = AccountModel.load(event.params.partyB.toHexString())!
 	account.deallocated = account.deallocated.plus(event.params.amount)
 	account.updateTimestamp = event.block.timestamp
@@ -329,9 +332,9 @@ export function handleDeallocateForPartyB(event: DeallocateForPartyB): void {
 
 // //////////////////////////////////// Main ////////////////////////////////////////
 export function handleSendQuote(event: SendQuote): void {
-	if (getOwner(event.params.partyA) == ZERO_ADDRESS) {
-		return  // skip events not for BMX
-	}
+	// if (getOwner(event.params.partyA) == ZERO_ADDRESS) {
+	// 	return  // skip events not for BMX
+	// }
 	let account = AccountModel.load(event.params.partyA.toHexString())!
 	account.quotesCount = account.quotesCount.plus(BigInt.fromString("1"))
 	account.save()
@@ -388,9 +391,9 @@ export function handleExpireQuote(event: ExpireQuote): void {
 }
 
 export function handleRequestToCancelQuote(event: RequestToCancelQuote): void {
-	if (getOwner(event.params.partyA) == ZERO_ADDRESS) {
-		return  // skip events not for BMX
-	}
+	// if (getOwner(event.params.partyA) == ZERO_ADDRESS) {
+	// 	return  // skip events not for BMX
+	// }
 	let account = AccountModel.load(event.params.partyA.toHexString())!
 	updateActivityTimestamps(account, event.block.timestamp)
 }
@@ -424,9 +427,9 @@ export function handleUnlockQuote(event: UnlockQuote): void {
 
 
 export function handleOpenPosition(event: OpenPosition): void {
-	if (getOwner(event.params.partyA) == ZERO_ADDRESS) {
-		return  // skip events not for BMX
-	}
+	// if (getOwner(event.params.partyA) == ZERO_ADDRESS) {
+	// 	return  // skip events not for BMX
+	// }
 	let account = AccountModel.load(event.params.partyA.toHexString())!
 	account.positionsCount = account.positionsCount.plus(BigInt.fromString("1"))
 	account.updateTimestamp = event.block.timestamp
@@ -503,9 +506,9 @@ export function handleOpenPosition(event: OpenPosition): void {
 export function handleRequestToClosePosition(
 	event: RequestToClosePosition,
 ): void {
-	if (getOwner(event.params.partyA) == ZERO_ADDRESS) {
-		return  // skip events not for BMX
-	}
+	// if (getOwner(event.params.partyA) == ZERO_ADDRESS) {
+	// 	return  // skip events not for BMX
+	// }
 	let account = AccountModel.load(event.params.partyA.toHexString())!
 	updateActivityTimestamps(account, event.block.timestamp)
 	let quote = QuoteModel.load(event.params.quoteId.toString())!
@@ -517,9 +520,9 @@ export function handleRequestToClosePosition(
 export function handleRequestToCancelCloseRequest(
 	event: RequestToCancelCloseRequest,
 ): void {
-	if (getOwner(event.params.partyA) == ZERO_ADDRESS) {
-		return  // skip events not for BMX
-	}
+	// if (getOwner(event.params.partyA) == ZERO_ADDRESS) {
+	// 	return  // skip events not for BMX
+	// }
 	let account = AccountModel.load(event.params.partyA.toHexString())!
 	updateActivityTimestamps(account, event.block.timestamp)
 }
@@ -604,9 +607,9 @@ function handleLiquidatePosition(_event: ethereum.Event, qId: BigInt): void {
 		event.params.partyA.toHexString() + "-" + qId.toString(),
 	)!
 	const quote = QuoteModel.load(qId.toString())!
-	if (getOwner(Address.fromBytes(quote.account)) == ZERO_ADDRESS) {
-		return  // skip events not for BMX
-	}
+	// if (getOwner(Address.fromBytes(quote.account)) == ZERO_ADDRESS) {
+	// 	return  // skip events not for BMX
+	// }
 	quote.quoteStatus = QuoteStatus.LIQUIDATED
 	quote.updateTimestamp = event.block.timestamp
 	quote.liquidatedSide = 1
@@ -662,9 +665,9 @@ function handleLiquidatePosition(_event: ethereum.Event, qId: BigInt): void {
 
 function handleClose(_event: ethereum.Event, name: string): void {
 	const event = changetype<FillCloseRequest>(_event) // FillClose, ForceClose, EmergencyClose all have the same event signature
-	if (getOwner(event.params.partyA) == ZERO_ADDRESS) {
-		return  // skip events not for BMX
-	}
+	// if (getOwner(event.params.partyA) == ZERO_ADDRESS) {
+	// 	return  // skip events not for BMX
+	// }
 	let quote = QuoteModel.load(event.params.quoteId.toString())!
 	quote.avgClosedPrice = quote.avgClosedPrice
 		.times(quote.closedAmount)
@@ -749,9 +752,9 @@ export function handleChargeFundingRate(event: ChargeFundingRate): void {
 		let quoteId = event.params.quoteIds[i]
 		const rate = event.params.rates[i]
 		let quote = QuoteModel.load(quoteId.toString())!
-		if (getOwner(Address.fromBytes(quote.account)) == ZERO_ADDRESS) {
-			return  // skip events not for BMX
-		}
+		// if (getOwner(Address.fromBytes(quote.account)) == ZERO_ADDRESS) {
+		// 	return  // skip events not for BMX
+		// }
 		let account = AccountModel.load(quote.account.toHexString())!
 		const openAmount = quote.quantity.minus(quote.closedAmount)
 		const chainQuote = getQuote(event.address, BigInt.fromString(quote.id))!
