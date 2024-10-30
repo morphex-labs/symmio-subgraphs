@@ -372,6 +372,9 @@ export function handleRequestToCancelQuote(event: RequestToCancelQuote): void {
 }
 
 export function handleAcceptCancelRequest(event: AcceptCancelRequest): void {
+	if (getOwnerByQuoteId(event.params.quoteId) == ZERO_ADDRESS) {
+		return  // skip events not for BMX
+	}
 	let quote = QuoteModel.load(event.params.quoteId.toString())
 	if (quote == null) return
 	quote.quoteStatus = QuoteStatus.CANCELED
@@ -380,6 +383,9 @@ export function handleAcceptCancelRequest(event: AcceptCancelRequest): void {
 }
 
 export function handleLockQuote(event: LockQuote): void {
+	if (getOwnerByQuoteId(event.params.quoteId) == ZERO_ADDRESS) {
+		return  // skip events not for BMX
+	}
 	let quote = QuoteModel.load(event.params.quoteId.toString())!
 	quote.updateTimestamp = event.block.timestamp
 	quote.partyB = event.params.partyB
@@ -388,6 +394,9 @@ export function handleLockQuote(event: LockQuote): void {
 }
 
 export function handleUnlockQuote(event: UnlockQuote): void {
+	if (getOwnerByQuoteId(event.params.quoteId) == ZERO_ADDRESS) {
+		return  // skip events not for BMX
+	}
 	let quote = QuoteModel.load(event.params.quoteId.toString())!
 	quote.updateTimestamp = event.block.timestamp
 	quote.partyB = null
@@ -396,6 +405,9 @@ export function handleUnlockQuote(event: UnlockQuote): void {
 }
 
 export function handleOpenPosition(event: OpenPosition): void {
+	if (getOwner(event.params.partyA) == ZERO_ADDRESS) {
+		return  // skip events not for BMX
+	}
 	let account = AccountModel.load(event.params.partyA.toHexString())!
 	account.positionsCount = account.positionsCount.plus(BigInt.fromString("1"))
 	account.updateTimestamp = event.block.timestamp
@@ -472,6 +484,9 @@ export function handleOpenPosition(event: OpenPosition): void {
 export function handleRequestToClosePosition(
 	event: RequestToClosePosition,
 ): void {
+	if (getOwnerByQuoteId(event.params.quoteId) == ZERO_ADDRESS) {
+		return  // skip events not for BMX
+	}
 	let quote = QuoteModel.load(event.params.quoteId.toString())!
 	quote.quoteStatus = QuoteStatus.CLOSE_PENDING
 	quote.updateTimestamp = event.block.timestamp
@@ -486,6 +501,9 @@ export function handleRequestToCancelCloseRequest(
 export function handleAcceptCancelCloseRequest(
 	event: AcceptCancelCloseRequest,
 ): void {
+	if (getOwnerByQuoteId(event.params.quoteId) == ZERO_ADDRESS) {
+		return  // skip events not for BMX
+	}
 	let quote = QuoteModel.load(event.params.quoteId.toString())!
 	quote.quoteStatus = QuoteStatus.OPENED
 	quote.save()
@@ -530,6 +548,9 @@ export function handleLiquidationDisputed(event: LiquidationDisputed): void {
 }
 
 function handleLiquidatePosition(_event: ethereum.Event, qId: BigInt): void {
+	if (getOwnerByQuoteId(qId) == ZERO_ADDRESS) {
+		return  // skip events not for BMX
+	}
 	const event = changetype<LiquidatePositionsPartyA>(_event)
 	const quote = QuoteModel.load(qId.toString())!
 	quote.quoteStatus = QuoteStatus.LIQUIDATED
@@ -585,7 +606,10 @@ function handleLiquidatePosition(_event: ethereum.Event, qId: BigInt): void {
 }
 
 function handleClose(_event: ethereum.Event, name: string): void {
-	const event = changetype<FillCloseRequest>(_event) // FillClose, ForceClose, EmergencyClose all have the same event signature
+	const event = changetype<FillCloseRequest>(_event)
+	if (getOwnerByQuoteId(event.params.quoteId) == ZERO_ADDRESS) {
+		return  // skip events not for BMX
+	}
 	let quote = QuoteModel.load(event.params.quoteId.toString())!
 	quote.avgClosedPrice = quote.avgClosedPrice
 		.times(quote.closedAmount)
