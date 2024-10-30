@@ -11,6 +11,7 @@ import {
 	UserActivity,
 } from "../generated/schema"
 import { symmioMultiAccount as MultiAccount } from "../generated/symmioMultiAccount/symmioMultiAccount";
+import { symmio as SymmioDiamond } from "../generated/symmio/symmio";
 import {ethereum} from "@graphprotocol/graph-ts/chain/ethereum"
 
 export function getDateFromTimeStamp(timestamp: BigInt): Date {
@@ -252,18 +253,19 @@ export function getConfiguration(event: ethereum.Event): Configuration {
 	return configuration
 }
 
-// export function getOwner(account: Address): Address {
-// 	const multiAccount = MultiAccount.bind(Address.fromString("0x6D63921D8203044f6AbaD8F346d3AEa9A2719dDD"))
-// 	return multiAccount.owners(account)
-// }
-
 export const ZERO_ADDRESS = Address.fromHexString("0x0000000000000000000000000000000000000000")
+const multiAccount = MultiAccount.bind(Address.fromString("0x6D63921D8203044f6AbaD8F346d3AEa9A2719dDD"))  // 0xC0ff4B56f62f20bA45f4229CC6BAaD986FA2a904
+const symmioDiamond = SymmioDiamond.bind(Address.fromString("0x91Cf2D8Ed503EC52768999aA6D8DBeA6e52dbe43"))  // ...
 
 export function getOwner(account: Address): Address {
-	const multiAccount = MultiAccount.bind(Address.fromString("0xC0ff4B56f62f20bA45f4229CC6BAaD986FA2a904"))  // 0x6D63921D8203044f6AbaD8F346d3AEa9A2719dDD
 	let result = multiAccount.try_owners(account)
 	if (result.reverted) {
 		return Address.fromBytes(ZERO_ADDRESS)
 	}
 	return result.value
+}
+
+export function getOwnerByQuoteId(quoteId: BigInt): Address {
+	let quote = symmioDiamond.getQuote(quoteId)
+	return getOwner(quote.partyA)
 }

@@ -1,4 +1,4 @@
-import {Address, BigInt, Bytes, ethereum} from "@graphprotocol/graph-ts"
+import { Address, BigInt, Bytes, ethereum } from "@graphprotocol/graph-ts"
 import {
 	AcceptCancelCloseRequest,
 	AcceptCancelRequest,
@@ -86,6 +86,7 @@ import {
 	getConfiguration,
 	getDailyHistoryForTimestamp,
 	getOwner,
+	getOwnerByQuoteId,
 	getSymbolTradeVolume,
 	getTotalHistory,
 	unDecimal,
@@ -230,9 +231,9 @@ export function handleDeallocatePartyA(event: DeallocatePartyA): void {
 }
 
 export function handleDeposit(event: Deposit): void {
-	// if (getOwner(event.params.user) == ZERO_ADDRESS) {
-	// 	return  // skip events not for BMX
-	// }
+	if (getOwner(event.params.user) == ZERO_ADDRESS) {
+		return  // skip events not for BMX
+	}
 	let account = AccountModel.load(event.params.user.toHexString())
 	if (account == null) {
 		let user = createNewUser(event.params.user, null, event.block, event.transaction)
@@ -265,9 +266,9 @@ export function handleDeposit(event: Deposit): void {
 }
 
 export function handleWithdraw(event: Withdraw): void {
-	// if (getOwner(event.params.sender) == ZERO_ADDRESS) {
-	// 	return  // skip events not for BMX
-	// }
+	if (getOwner(event.params.sender) == ZERO_ADDRESS) {
+		return  // skip events not for BMX
+	}
 	let account = AccountModel.load(event.params.sender.toHexString())
 	if (account == null) {
 		let user = createNewUser(event.params.sender, null, event.block, event.transaction)
@@ -301,40 +302,43 @@ export function handleWithdraw(event: Withdraw): void {
 }
 
 export function handleAllocateForPartyB(event: AllocateForPartyB): void {
-	// if (getOwner(event.params.partyB) == ZERO_ADDRESS) {
-	// 	return  // skip events not for BMX
-	// }
-	let account = AccountModel.load(event.params.partyB.toHexString())!
-	account.allocated = account.allocated.plus(event.params.amount)
-	account.updateTimestamp = event.block.timestamp
-	account.save()
+	return
+	// // if (getOwner(event.params.partyB) == ZERO_ADDRESS) {
+	// // 	return  // skip events not for BMX
+	// // }
+	// let account = AccountModel.load(event.params.partyB.toHexString())!
+	// account.allocated = account.allocated.plus(event.params.amount)
+	// account.updateTimestamp = event.block.timestamp
+	// account.save()
 }
 
 export function handleAllocatePartyB(event: AllocatePartyB): void {
-	// if (getOwner(event.params.partyB) == ZERO_ADDRESS) {
-	// 	return  // skip events not for BMX
-	// }
-	let account = AccountModel.load(event.params.partyB.toHexString())!
-	account.allocated = account.allocated.plus(event.params.amount)
-	account.updateTimestamp = event.block.timestamp
-	account.save()
+	return
+	// // if (getOwner(event.params.partyB) == ZERO_ADDRESS) {
+	// // 	return  // skip events not for BMX
+	// // }
+	// let account = AccountModel.load(event.params.partyB.toHexString())!
+	// account.allocated = account.allocated.plus(event.params.amount)
+	// account.updateTimestamp = event.block.timestamp
+	// account.save()
 }
 
 export function handleDeallocateForPartyB(event: DeallocateForPartyB): void {
-	// if (getOwner(event.params.partyB) == ZERO_ADDRESS) {
-	// 	return  // skip events not for BMX
-	// }
-	let account = AccountModel.load(event.params.partyB.toHexString())!
-	account.deallocated = account.deallocated.plus(event.params.amount)
-	account.updateTimestamp = event.block.timestamp
-	account.save()
+	return
+	// // if (getOwner(event.params.partyB) == ZERO_ADDRESS) {
+	// // 	return  // skip events not for BMX
+	// // }
+	// let account = AccountModel.load(event.params.partyB.toHexString())!
+	// account.deallocated = account.deallocated.plus(event.params.amount)
+	// account.updateTimestamp = event.block.timestamp
+	// account.save()
 }
 
 // //////////////////////////////////// Main ////////////////////////////////////////
 export function handleSendQuote(event: SendQuote): void {
-	// if (getOwner(event.params.partyA) == ZERO_ADDRESS) {
-	// 	return  // skip events not for BMX
-	// }
+	if (getOwner(event.params.partyA) == ZERO_ADDRESS) {
+		return  // skip events not for BMX
+	}
 	let account = AccountModel.load(event.params.partyA.toHexString())!
 	account.quotesCount = account.quotesCount.plus(BigInt.fromString("1"))
 	account.save()
@@ -384,6 +388,9 @@ export function handleSendQuote(event: SendQuote): void {
 }
 
 export function handleExpireQuote(event: ExpireQuote): void {
+	if (getOwnerByQuoteId(event.params.quoteId) == ZERO_ADDRESS) {
+		return  // skip events not for BMX
+	}
 	let quote = QuoteModel.load(event.params.quoteId.toString())!
 	quote.quoteStatus = event.params.quoteStatus
 	quote.updateTimestamp = event.block.timestamp
@@ -391,15 +398,18 @@ export function handleExpireQuote(event: ExpireQuote): void {
 }
 
 export function handleRequestToCancelQuote(event: RequestToCancelQuote): void {
-	// if (getOwner(event.params.partyA) == ZERO_ADDRESS) {
-	// 	return  // skip events not for BMX
-	// }
+	if (getOwner(event.params.partyA) == ZERO_ADDRESS) {
+		return  // skip events not for BMX
+	}
 	let account = AccountModel.load(event.params.partyA.toHexString())!
 	updateActivityTimestamps(account, event.block.timestamp)
 }
 
 
 export function handleAcceptCancelRequest(event: AcceptCancelRequest): void {
+	if (getOwnerByQuoteId(event.params.quoteId) == ZERO_ADDRESS) {
+		return  // skip events not for BMX
+	}
 	let quote = QuoteModel.load(event.params.quoteId.toString())
 	if (quote == null)
 		return
@@ -410,6 +420,9 @@ export function handleAcceptCancelRequest(event: AcceptCancelRequest): void {
 
 
 export function handleLockQuote(event: LockQuote): void {
+	if (getOwnerByQuoteId(event.params.quoteId) == ZERO_ADDRESS) {
+		return  // skip events not for BMX
+	}
 	let quote = QuoteModel.load(event.params.quoteId.toString())!
 	quote.updateTimestamp = event.block.timestamp
 	quote.partyB = event.params.partyB
@@ -418,6 +431,9 @@ export function handleLockQuote(event: LockQuote): void {
 }
 
 export function handleUnlockQuote(event: UnlockQuote): void {
+	if (getOwnerByQuoteId(event.params.quoteId) == ZERO_ADDRESS) {
+		return  // skip events not for BMX
+	}
 	let quote = QuoteModel.load(event.params.quoteId.toString())!
 	quote.updateTimestamp = event.block.timestamp
 	quote.partyB = null
@@ -427,9 +443,9 @@ export function handleUnlockQuote(event: UnlockQuote): void {
 
 
 export function handleOpenPosition(event: OpenPosition): void {
-	// if (getOwner(event.params.partyA) == ZERO_ADDRESS) {
-	// 	return  // skip events not for BMX
-	// }
+	if (getOwner(event.params.partyA) == ZERO_ADDRESS) {
+		return  // skip events not for BMX
+	}
 	let account = AccountModel.load(event.params.partyA.toHexString())!
 	account.positionsCount = account.positionsCount.plus(BigInt.fromString("1"))
 	account.updateTimestamp = event.block.timestamp
@@ -506,9 +522,9 @@ export function handleOpenPosition(event: OpenPosition): void {
 export function handleRequestToClosePosition(
 	event: RequestToClosePosition,
 ): void {
-	// if (getOwner(event.params.partyA) == ZERO_ADDRESS) {
-	// 	return  // skip events not for BMX
-	// }
+	if (getOwner(event.params.partyA) == ZERO_ADDRESS) {
+		return  // skip events not for BMX
+	}
 	let account = AccountModel.load(event.params.partyA.toHexString())!
 	updateActivityTimestamps(account, event.block.timestamp)
 	let quote = QuoteModel.load(event.params.quoteId.toString())!
@@ -520,9 +536,9 @@ export function handleRequestToClosePosition(
 export function handleRequestToCancelCloseRequest(
 	event: RequestToCancelCloseRequest,
 ): void {
-	// if (getOwner(event.params.partyA) == ZERO_ADDRESS) {
-	// 	return  // skip events not for BMX
-	// }
+	if (getOwner(event.params.partyA) == ZERO_ADDRESS) {
+		return  // skip events not for BMX
+	}
 	let account = AccountModel.load(event.params.partyA.toHexString())!
 	updateActivityTimestamps(account, event.block.timestamp)
 }
@@ -530,6 +546,9 @@ export function handleRequestToCancelCloseRequest(
 export function handleAcceptCancelCloseRequest(
 	event: AcceptCancelCloseRequest,
 ): void {
+	if (getOwnerByQuoteId(event.params.quoteId) == ZERO_ADDRESS) {
+		return  // skip events not for BMX
+	}
 	let quote = QuoteModel.load(event.params.quoteId.toString())!
 	quote.quoteStatus = QuoteStatus.OPENED
 	quote.save()
@@ -570,6 +589,9 @@ export function handleLiquidatePositionsPartyB(
 export function handleSetSymbolsPrices(
 	event: SetSymbolsPrices,
 ): void {
+	if (getOwner(event.params.partyA) == ZERO_ADDRESS) {
+		return  // skip events not for BMX
+	}
 	const liquidationDetail = getLiquidatedStateOfPartyA(event.address, event.params.partyA)
 	const balanceInfoOfPartyA = getBalanceInfoOfPartyA(event.address, event.params.partyA)
 	if (liquidationDetail == null || balanceInfoOfPartyA == null)
@@ -594,6 +616,9 @@ export function handleSetSymbolsPrices(
 export function handleLiquidationDisputed(
 	event: LiquidationDisputed,
 ): void {
+	if (getOwner(event.params.partyA) == ZERO_ADDRESS) {
+		return  // skip events not for BMX
+	}
 	let model = new PartyALiquidationDisputed(event.transaction.hash.toHexString() + event.transactionLogIndex.toString())
 	model.partyA = event.params.partyA
 	model.timestamp = event.block.timestamp
@@ -602,14 +627,14 @@ export function handleLiquidationDisputed(
 }
 
 function handleLiquidatePosition(_event: ethereum.Event, qId: BigInt): void {
+	if (getOwnerByQuoteId(qId) == ZERO_ADDRESS) {
+		return  // skip events not for BMX
+	}
 	const event = changetype<LiquidatePositionsPartyA>(_event)
 	let history = TradeHistoryModel.load(
 		event.params.partyA.toHexString() + "-" + qId.toString(),
 	)!
 	const quote = QuoteModel.load(qId.toString())!
-	// if (getOwner(Address.fromBytes(quote.account)) == ZERO_ADDRESS) {
-	// 	return  // skip events not for BMX
-	// }
 	quote.quoteStatus = QuoteStatus.LIQUIDATED
 	quote.updateTimestamp = event.block.timestamp
 	quote.liquidatedSide = 1
@@ -665,9 +690,9 @@ function handleLiquidatePosition(_event: ethereum.Event, qId: BigInt): void {
 
 function handleClose(_event: ethereum.Event, name: string): void {
 	const event = changetype<FillCloseRequest>(_event) // FillClose, ForceClose, EmergencyClose all have the same event signature
-	// if (getOwner(event.params.partyA) == ZERO_ADDRESS) {
-	// 	return  // skip events not for BMX
-	// }
+	if (getOwnerByQuoteId(event.params.quoteId) == ZERO_ADDRESS) {
+		return  // skip events not for BMX
+	}
 	let quote = QuoteModel.load(event.params.quoteId.toString())!
 	quote.avgClosedPrice = quote.avgClosedPrice
 		.times(quote.closedAmount)
@@ -750,11 +775,11 @@ export function handleLiquidatePartyB(event: LiquidatePartyB): void {
 export function handleChargeFundingRate(event: ChargeFundingRate): void {
 	for (let i = 0, lenQ = event.params.quoteIds.length; i < lenQ; i++) {
 		let quoteId = event.params.quoteIds[i]
+		if (getOwnerByQuoteId(quoteId) == ZERO_ADDRESS) {
+			return  // skip events not for BMX
+		}
 		const rate = event.params.rates[i]
 		let quote = QuoteModel.load(quoteId.toString())!
-		// if (getOwner(Address.fromBytes(quote.account)) == ZERO_ADDRESS) {
-		// 	return  // skip events not for BMX
-		// }
 		let account = AccountModel.load(quote.account.toHexString())!
 		const openAmount = quote.quantity.minus(quote.closedAmount)
 		const chainQuote = getQuote(event.address, BigInt.fromString(quote.id))!
