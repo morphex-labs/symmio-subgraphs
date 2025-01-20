@@ -13,6 +13,11 @@
       "symmioMultiAccountAddress": "0xC0ff4B56f62f20bA45f4229CC6BAaD986FA2a904",
       "symmioMultiAccountStartBlock": "12387524",
       "symmioMultiAccountName": "multi_account_freestyle"
+    },
+    {
+      "symmioMultiAccountAddress": "0xDE6446197Cd1AE02E1C5B7191a626Fb0c1757377",
+      "symmioMultiAccountStartBlock": "16673330",
+      "symmioMultiAccountName": "multi_account_unknown"
     }
   ],
   "analyticsDeployUrl": "bmx/symmioanalytics_base_8_2_dev",
